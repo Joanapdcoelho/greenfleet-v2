@@ -8,6 +8,16 @@ RemoteSystemsTempFiles/
 target/
 **/target/
 
+# Eclipse / Anypoint project files
+.project
+.classpath
+.settings/
+
+# Mule runtime and tooling
+.mule/
+bin/
+**/bin/
+
 # OS files
 .DS_Store
 Thumbs.db
