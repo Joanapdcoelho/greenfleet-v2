@@ -1,5 +1,106 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd"></mule>
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	
+	<flow name="getAccount" doc:id="e7eb1fbc-d877-4798-bb08-87f889bfcd8f" >
+		<http:request method="GET" doc:name="Request" doc:id="79d033f9-b7cd-4111-b274-657f7c2486a6" config-ref="HTTP_Request_configuration" path="/api/account" />
+		<logger level="INFO" doc:name="Logger" doc:id="1b01396e-0008-4ba0-8e97-16fb5b47b330" message="#[payload]" />
+	</flow>
+	<flow name="postAccount" doc:id="4ad554d0-cf6a-4ded-8b0a-2f196e60f47d" >
+		<logger level="INFO" doc:name="Logger" doc:id="a08a890f-d005-48b5-b6f8-39e74c98bb6e" message="#[payload]" />
+		<set-variable value="#[payload]" doc:name="Set Variable" doc:id="e4657dd2-aa35-40be-941f-dfba9b23ece2" variableName="accountUser" mimeType="application/json" />
+		<flow-ref doc:name="Flow Reference" doc:id="e40f2408-dac0-43b3-a02e-c2e16aabb066" name="getAccount" />
+		<logger level="INFO" doc:name="Logger1" doc:id="d8579654-35b6-4201-be25-50315d364f3e" message="#[vars.accountuser]" />
+		<ee:transform doc:name="Transform Message" doc:id="1c2be365-3627-435e-b797-c3f3de1e05ca" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[
+%dw 2.0
+output application/json
+---
+payload
+    groupBy ((item) -> item.id)
+    pluck ((value, key) -> {
+        id: key,
+        name: value[0].name,
+        industry: value[0].industry,
+        country: value[0].country,
+        vehicles: value map {
+            id: $.vehicle_id,
+            brand: $.brand,
+            model: $.model,
+            status: $.status
+        }
+    })
+
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<ee:transform doc:name="Transform Message1" doc:id="4c9af8b0-03ec-4deb-bccd-1f8867c3fb3d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+var accounts = payload
+---
+(accounts ++ (vars.accountuser default [])) orderBy ((item) -> item.name)
+
+
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<http:request method="POST" doc:name="Request" doc:id="4de9892a-7ccb-4bc2-92ee-6525c2b620aa" config-ref="HTTP_Request_configuration_post" path="/api/account" outputMimeType="application/json" responseTimeout="#[300000000000]" >
+			<http:headers ><![CDATA[#[%dw 2.0
+output application/java
+---
+{
+    "Content-Type": "application/json; charset=UTF-8",
+    "Accept": "application/json"
+}]]]></http:headers>
+		</http:request>
+	</flow>
+	<flow name="postMaintenance" doc:id="be912994-90fb-4d4a-8de3-817639af356e" >
+		<logger level="INFO" doc:name="Logger" doc:id="82197d05-f4e9-4625-8118-7976f5c20399" message="#[payload]" />
+		<http:request method="POST" doc:name="Request" doc:id="207b2b7f-58ac-4241-a34f-df753afa07bd" config-ref="HTTP_Request_configuration_post" path="/api/maintenance" outputMimeType="application/json" responseTimeout="#[3000000000]" >
+			<http:headers ><![CDATA[#[%dw 2.0
+output application/java
+---
+{
+    "Content-Type": "application/json; charset=UTF-8",
+    "Accept": "application/json"
+}]]]></http:headers>
+		</http:request>
+	</flow>
+	<flow name="getAccount\(ID)\vehicles" doc:id="290a62ca-3e41-42ab-98a3-51fb95d0c07b" >
+		<logger level="INFO" doc:name="Logger" doc:id="c5174137-75ee-4c35-8056-9b0b642e47ba" />
+		<http:request method="GET" doc:name="Request" doc:id="9bc5bae7-a7c0-4087-a333-05c2b76c3403" config-ref="HTTP_Request_configuration" path="/api/account/{ID}/vehicles" responseTimeout="#[30000000000]" >
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	ID : attributes.uriParams.ID
+}]]]></http:uri-params>
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	model : attributes.queryParams.model,
+	brand : attributes.queryParams.brand,
+	status : attributes.queryParams.status
+}]]]></http:query-params>
+		</http:request>
+	</flow>
+	<flow name="getAccount\(ID)" doc:id="99e3b22a-8029-4e23-bc8c-2b1cdfd66a64" >
+		<logger level="INFO" doc:name="Logger" doc:id="d9f01882-c161-488e-b9f9-dd605c00ddfc" />
+		<http:request method="GET" doc:name="Request" doc:id="b4b7a2a4-5d25-4237-9edb-021dc1f8b150" config-ref="HTTP_Request_configuration" path="/api/account/{ID}" >
+			<http:uri-params ><![CDATA[#[output application/java
+---
+{
+	ID : attributes.uriParams.ID
+}]]]></http:uri-params>
+		</http:request>
+	</flow>
+	
+	</mule>
