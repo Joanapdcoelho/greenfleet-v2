@@ -29,6 +29,14 @@
 				<artifactId>mule-maven-plugin</artifactId>
 				<version>${mule.maven.plugin.version}</version>
 				<extensions>true</extensions>
+				<configuration>
+					<sharedLibraries>
+						<sharedLibrary>
+							<groupId>com.mysql</groupId>
+							<artifactId>mysql-connector-j</artifactId>
+						</sharedLibrary>
+					</sharedLibraries>
+				</configuration>
 			</plugin>
 		</plugins>
 	</build>
@@ -47,17 +55,21 @@
 			<classifier>mule-plugin</classifier>
 		</dependency>
 		<dependency>
-			<groupId>8447f95a-7ec8-4e54-affa-1ffc93d1beaf</groupId>
-			<artifactId>sapi-greenfleet-accounts-maintenance</artifactId>
-			<version>1.0.0</version>
-			<classifier>raml</classifier>
-			<type>zip</type>
-		</dependency>
-		<dependency>
 			<groupId>org.mule.modules</groupId>
 			<artifactId>mule-apikit-module</artifactId>
 			<version>1.11.10</version>
 			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.connectors</groupId>
+			<artifactId>mule-db-connector</artifactId>
+			<version>1.15.0</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
+			<version>8.0.33</version>
 		</dependency>
 	</dependencies>
 
@@ -72,6 +84,12 @@
 			<id>mulesoft-releases</id>
 			<name>MuleSoft Releases Repository</name>
 			<url>https://repository.mulesoft.org/releases/</url>
+			<layout>default</layout>
+		</repository>
+		<repository>
+			<id>central</id>
+			<name>Maven Central</name>
+			<url>https://repo1.maven.org/maven2/</url>
 			<layout>default</layout>
 		</repository>
 	</repositories>

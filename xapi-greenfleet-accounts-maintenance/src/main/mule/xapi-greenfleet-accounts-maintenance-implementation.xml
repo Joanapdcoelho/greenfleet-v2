@@ -1,127 +1,118 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+      xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd">
 
-<mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
-	xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="
-http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd 
-http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
-	
-	<flow name="getAccount" doc:id="5b9ddb31-67ed-494d-b800-b7d5896607cd" >
-		<http:request method="GET" doc:name="Request" doc:id="821ef1fa-a0c1-4af6-a388-9bf4e2cf6e3a" config-ref="HTTP_Request_configuration(Process)" path="/api/account" />
-	</flow>
-	<flow name="validate-id" doc:id="5451b0f4-aea7-4b37-bf97-f849579fc2ab" >
-		<validation:is-true doc:name="Is true" doc:id="319dd635-8f29-4bb1-95c2-2727cfae357c" expression="#[ attributes.uriParams.ID matches /^[A]\d{3}$/]" message='"ID inválido"' />
-		<error-handler >
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="3c2bf4f2-e7c4-4b4f-85be-7eed7c62e65a" type="VALIDATION:INVALID_BOOLEAN">
-				<logger level="INFO" doc:name="Logger" doc:id="be6c3a42-b972-45e8-997d-b60ca67783fc" message="#[error.description]" />
-				<ee:transform doc:name="Transform Message" doc:id="5df13f4a-321a-42fc-b60e-6eac53183ac8">
-					<ee:message>
-						<ee:set-payload><![CDATA[%dw 2.0
+    <flow name="getAccount">
+        <http:request method="GET"
+                      config-ref="xapi-to-papi-httpRequestConfig"
+                      path="/api/account"/>
+    </flow>
+
+    <flow name="validate-id">
+        <validation:is-true expression="#[attributes.uriParams.ID matches /^[A]\d{3}$/]"
+                            message="ID inválido"/>
+        <error-handler>
+            <on-error-propagate type="VALIDATION:INVALID_BOOLEAN">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
-{
-	"message": "ID inválido"
-}]]></ee:set-payload>
-					</ee:message>
-				</ee:transform>
-			</on-error-propagate>
-		</error-handler>
-	</flow>
-	<flow name="validate-status" doc:id="1ec4afe7-f590-4ae2-8cb5-de76842f3fcf" >
-		<validation:is-true doc:name="Is true" doc:id="73a4794c-2d03-462d-899e-c92d0facbaff" expression='#[if (isEmpty(attributes.queryParams.status)) true else ["available", "in maintenance", "reserved"] contains attributes.queryParams.status]' message='"Status errado"' />
-		<error-handler >
-			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="3a534303-b1cf-48b9-8913-1a6068f71453" type="VALIDATION:INVALID_BOOLEAN">
-				<logger level="INFO" doc:name="Logger" doc:id="45dd3e9e-df9e-4533-aaee-478b9a7edf43" message="#[error.description]" />
-				<ee:transform doc:name="Transform Message" doc:id="135ef0f7-aeea-4d2f-9d80-f2c3bac00ea5">
-					<ee:message>
-						<ee:set-payload><![CDATA[%dw 2.0
+{ message: "Invalid ID" }]]></ee:set-payload>
+                    </ee:message>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+
+    <flow name="validate-status">
+        <validation:is-true expression='#[if (isEmpty(attributes.queryParams.status)) true else ["available", "in maintenance", "reserved"] contains attributes.queryParams.status]'
+                            message="Status errado"/>
+        <error-handler>
+            <on-error-propagate type="VALIDATION:INVALID_BOOLEAN">
+                <ee:transform>
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
-{
-	"message": "Satus inválido"
-}]]></ee:set-payload>
-					</ee:message>
-				</ee:transform>
-			</on-error-propagate>
-		</error-handler>
-	</flow>
-	<flow name="getAccount\(ID)" doc:id="c5361c1b-fb11-4c33-9ec7-78bac52463d5">
-		<logger level="INFO" doc:name="Logger" doc:id="352b7977-0f3c-4885-b0b6-de486b267d41" />
-		<flow-ref doc:name="validate-id" doc:id="d6a62063-d6bb-48e8-a314-564c2bb58a7c" name="validate-id" target="greenfleet-implementationFlow" />
-		<http:request method="GET" doc:name="Request" doc:id="7955e569-6ec3-45cd-b931-48d371918a5f" config-ref="HTTP_Request_configuration(Process)" path="/api/account/{ID}" responseTimeout="#[30000000]">
-			<http:uri-params><![CDATA[#[output application/java
----
-{
-	ID : attributes.uriParams.ID
-}]]]></http:uri-params>
-		</http:request>
-	</flow>
-	<flow name="getAccount\(ID)\vehicles" doc:id="f42e345a-34b9-4de1-a01d-292f3cccdf4f" >
-		<logger level="INFO" doc:name="Logger" doc:id="9af0cc43-883e-4eda-ac61-45cbd812778a" />
-		<flow-ref doc:name="validate-id" doc:id="502a7e9a-943c-4a41-aa73-272fbf68cb67" name="validate-id" target="greenfleet-implementationFlow"/>
-		<flow-ref doc:name="validate-status" doc:id="fec21d0b-794b-488a-8274-cb3b905f8eae" name="validate-status"/>
-		<http:request method="GET" doc:name="Request" doc:id="0281ca66-0498-4fc1-823a-9590104cf401" config-ref="HTTP_Request_configuration(Process)" path="/api/account/{ID}/vehicles" responseTimeout="#[30000000000000000]" >
-			<http:uri-params ><![CDATA[#[output application/java
----
-{
-	ID : attributes.uriParams.ID
-}]]]></http:uri-params>
-			<http:query-params ><![CDATA[#[output application/java
----
-{
-	model : attributes.queryParams.model,
-	brand : attributes.queryParams.brand,
-	status : attributes.queryParams.status
-}]]]></http:query-params>
-		</http:request>
-	</flow>
-	<flow name="postAccount" doc:id="58516a0d-b32a-4475-b465-e0b0268e9495" >
-		<logger level="INFO" doc:name="Logger" doc:id="6b2a0583-9e1a-4928-b0f6-a839d5a580e8" message="#[payload]" />
-		<http:request method="POST" doc:name="Request" doc:id="3eb4a920-0ec6-46ff-bbf5-ce9883490f41" config-ref="HTTP_Request_configuration(Process)" path="/api/account" outputMimeType="application/json" responseTimeout="#[3000000000000]" >
-			<http:headers ><![CDATA[#[%dw 2.0
-output application/java
----
-{
-    "Content-Type": "application/json; charset=UTF-8",
-    "Accept": "application/json"
-}]]]></http:headers>
-		</http:request>
-		<ee:transform doc:name="Transform Message" doc:id="25be5030-48ee-4b6f-850e-fd909bd59536" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
+{ message: "Invalid status" }]]></ee:set-payload>
+                    </ee:message>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+
+    <flow name="getAccount(ID)" doc:id="b35c9ae3-4a13-4c68-8ee1-64659fe625f5">
+        <flow-ref name="validate-id"/>
+        <http:request method="GET"
+                      config-ref="xapi-to-papi-httpRequestConfig"
+                      path="/api/account/{ID}">
+            <http:uri-params><![CDATA[#[{ ID: attributes.uriParams.ID }]]]></http:uri-params>
+        </http:request>
+    </flow>
+
+    <flow name="getAccount(ID)vehicles" doc:id="5ceb1748-a87d-4fbf-beb0-98191ea0c232">
+        <flow-ref name="validate-id"/>
+        <flow-ref name="validate-status"/>
+        <http:request method="GET"
+                      config-ref="xapi-to-papi-httpRequestConfig"
+                      path="/api/account/{ID}/vehicles">
+            <http:uri-params><![CDATA[#[{ ID: attributes.uriParams.ID }]]]></http:uri-params>
+            <http:query-params><![CDATA[#[{
+                model: attributes.queryParams.model,
+                brand: attributes.queryParams.brand,
+                status: attributes.queryParams.status
+            }]]]></http:query-params>
+        </http:request>
+    </flow>
+
+    <flow name="postAccount">
+        <http:request method="POST"
+                      config-ref="xapi-to-papi-httpRequestConfig"
+                      path="/api/account"
+                      outputMimeType="application/json">
+            <http:headers><![CDATA[#[{
+                "Content-Type": "application/json; charset=UTF-8",
+                "Accept": "application/json"
+            }]]]></http:headers>
+        </http:request>
+        <ee:transform>
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
-{
-  message: "Contas adicionas com Sucesso"
-} as Object {encoding: "UTF-8", mediaType: "application/json"}]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
-	</flow>
-	<flow name="postMaintenance" doc:id="7203fe84-695d-4435-a3b2-0d44ad56f428" >
-		<logger level="INFO" doc:name="Logger" doc:id="c2b2ef85-0197-4c98-b48f-8d6dea52d8e4" message="#[payload]" />
-		<http:request method="POST" doc:name="Request" doc:id="b1ad4006-335a-4bde-9a65-e7418694e710" config-ref="HTTP_Request_configuration(Process)" path="/api/maintenance" outputMimeType="application/json" responseTimeout="#[3000000000]" >
-			<http:headers ><![CDATA[#[%dw 2.0
-output application/java
----
-{
-    "Content-Type": "application/json; charset=UTF-8",
-    "Accept": "application/json"
-}]]]></http:headers>
-		</http:request>
-		<ee:transform doc:name="Transform Message" doc:id="407e4b00-73c3-46e8-8723-d7724ce94488" >
-			<ee:message >
-				<ee:set-payload ><![CDATA[%dw 2.0
+{ message: "Accounts successfully added" }]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+
+    <flow name="postMaintenance">
+        <http:request method="POST"
+                      config-ref="xapi-to-papi-httpRequestConfig"
+                      path="/api/maintenance"
+                      outputMimeType="application/json">
+            <http:headers><![CDATA[#[{
+                "Content-Type": "application/json; charset=UTF-8",
+                "Accept": "application/json"
+            }]]]></http:headers>
+        </http:request>
+        <ee:transform>
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
-{
-  message: "Pedido de manutenção adicionado"
-} as Object {encoding: "UTF-8", mediaType: "application/json"}]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
-	</flow>
-	
-	</mule>
+{ message: "Maintenance request added" }]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </flow>
+
+</mule>

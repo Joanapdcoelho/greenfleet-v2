@@ -1,0 +1,145 @@
+#%RAML 1.0
+title: papi-greenfleet-accounts-maintenance
+description: GreenFleet Process API. Orchestrates data between Experience API and System API for accounts, vehicles, and maintenance requests.
+version: v1
+protocols:
+  - HTTP
+  - HTTPS
+mediaType:
+  - application/json
+
+uses:
+  lib: greenfleet-datatypes-library.raml
+
+/accounts:
+  get:
+    displayName: Get accounts
+    responses:
+      200:
+        body:
+          application/json:
+            type: lib.Account[]            
+      500:
+        body:
+          application/json:
+            type: lib.ErrorResponse
+
+  post:
+    displayName: Create account
+    body:
+      application/json:
+        type: lib.Account
+    responses:
+      201:
+        body:
+          application/json:
+            type: lib.Account
+      400:
+        body:
+          application/json:
+            type: lib.ErrorResponse
+      500:
+        body:
+          application/json:
+            type: lib.ErrorResponse
+
+/accounts/{id}:
+  uriParameters:
+    id:
+      type: string
+      required: true
+  get:
+    displayName: Get account by id
+    responses:
+      200:
+        body:
+          application/json:
+            type: lib.Account
+      404:
+        body:
+          application/json:
+            type: lib.ErrorResponse
+      500:
+        body:
+          application/json:
+            type: lib.ErrorResponse
+
+/vehicles:
+  get:
+    displayName: Get vehicles
+    queryParameters:
+      brand:
+        type: string
+        required: false
+      model:
+        type: string
+        required: false
+      status:
+        type: lib.VehicleStatus
+        required: false
+    responses:
+      200:
+        body:
+          application/json:
+            type: lib.Vehicle[]
+      400:
+        body:
+          application/json:
+            type: lib.ErrorResponse
+      500:
+        body:
+          application/json:
+            type: lib.ErrorResponse
+
+/vehicles/{id}:
+  uriParameters:
+    id:
+      type: string
+      required: true
+  get:
+    displayName: Get vehicle by id
+    responses:
+      200:
+        body:
+          application/json:
+            type: lib.Vehicle
+      404:
+        body:
+          application/json:
+            type: lib.ErrorResponse
+      500:
+        body:
+          application/json:
+            type: lib.ErrorResponse
+
+/maintenance:
+  get:
+    displayName: Get maintenance requests
+    responses:
+      200:
+        body:
+          application/json:
+            type: lib.MaintenanceRequest[]
+      500:
+        body:
+          application/json:
+            type: lib.ErrorResponse
+
+  post:
+    displayName: Create maintenance request
+    body:
+      application/json:
+        type: lib.MaintenanceRequest
+    responses:
+      201:
+        body:
+          application/json:
+            type: lib.MaintenanceRequest
+      400:
+        body:
+          application/json:
+            type: lib.ErrorResponse
+      500:
+        body:
+          application/json:
+            type: lib.ErrorResponse

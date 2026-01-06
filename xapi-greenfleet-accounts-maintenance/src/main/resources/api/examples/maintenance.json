@@ -1,0 +1,30 @@
+[
+    {
+        "id": "M501",
+        "vehicleId": "V102",
+        "description": "Battery check",
+        "date": "2025-11-20",
+        "status": "scheduled"
+    },
+    {
+        "id": "M502",
+        "vehicleId": "V106",
+        "description": "Brake replacement",
+        "date": "2025-11-21",
+        "status": "in progress"
+    },
+    {
+        "id": "M503",
+        "vehicleId": "V101",
+        "description": "Software update",
+        "date": "2025-11-18",
+        "status": "completed"
+    },
+    {
+        "id": "M504",
+        "vehicleId": "V103",
+        "description": "Tire rotation",
+        "date": "2025-11-22",
+        "status": "scheduled"
+    }
+]

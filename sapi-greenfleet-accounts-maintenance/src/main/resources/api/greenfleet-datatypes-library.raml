@@ -1,0 +1,96 @@
+#%RAML 1.0 Library
+usage: Greenfleet shared datatypes library
+
+types:
+
+  Account:
+    type: object
+    additionalProperties: false
+    properties:
+      id:
+        type: string
+        required: true
+        minLength: 1
+      name:
+        type: string
+        required: true
+        minLength: 1
+      industry:
+        type: string
+        required: false
+      country:
+        type: string
+        required: true
+        minLength: 1
+      vehicles:
+        type: array
+        required: false
+        items: Vehicle
+
+  VehicleStatus:
+    type: string
+    enum: [available, reserved, 'in maintenance']
+
+  Vehicle:
+    type: object
+    additionalProperties: false
+    properties:
+      id:
+        type: string
+        required: true
+        minLength: 1
+      brand:
+        type: string
+        required: true
+        minLength: 1
+      model:
+        type: string
+        required: true
+        minLength: 1
+      status:
+        type: VehicleStatus
+        required: true
+      lastService?:
+        type: date-only
+        description: Optional
+
+  MaintenanceStatus:
+    type: string
+    enum: [scheduled, 'in progress', completed]
+
+  MaintenanceRequest:
+    type: object
+    additionalProperties: false
+    properties:
+      id:
+        type: string
+        required: true
+        minLength: 1
+      vehicleId:
+        type: string
+        required: true
+        minLength: 1
+      description:
+        type: string
+        required: true
+        minLength: 1
+      date:
+        type: date-only
+        required: true
+      status:
+        type: MaintenanceStatus
+        required: true
+
+  ErrorResponse:
+    type: object
+    additionalProperties: false
+    properties:
+      code:
+        type: integer
+        required: true
+      message:
+        type: string
+        required: true
+      details?:
+        type: string
+

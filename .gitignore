@@ -21,3 +21,17 @@ bin/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Anypoint Studio tooling e cache
+.tooling/
+**/.tooling/
+**/.anypointstudio/
+**/.mule-runtime/
+
+# Mule Designer e ficheiros gerados
+*/.wev
+*/.bak
+*/.tmp
+
+# Anypoint local runtime downloads
+**/.mule-soft/

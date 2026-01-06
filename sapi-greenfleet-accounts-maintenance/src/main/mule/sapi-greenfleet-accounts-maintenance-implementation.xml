@@ -12,8 +12,9 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	
 	<flow name="getAccount" doc:id="816d25e1-a263-46ed-ab2c-2cae1b5693fe" >
 		<logger level="INFO" doc:name="Logger" doc:id="a112a748-5d5a-49b9-86e6-9b6c2d484ac0" message="get:\dataBaseAccount:greenfleetsystem-config" />
-		<db:select doc:name="Select" doc:id="13c9ca51-a725-4940-a188-175409f36a58" config-ref="Database_Config" >
-			<db:sql ><![CDATA[SELECT * FROM Accounts]]></db:sql>
+		<db:select doc:name="Select" doc:id="6f98d4f3-d322-437a-954b-26e3728e67a5" config-ref="Database_Config">
+			<db:sql ><![CDATA[SELECT * 
+FROM accounts]]></db:sql>
 		</db:select>
 		<validation:is-true doc:name="Is not empty" doc:id="42ffcc38-a8b2-4e2c-9250-873975e28bd1" expression="#[!isEmpty(payload)]" message='"Não existem contas"'>
 			<error-mapping sourceType="VALIDATION:INVALID_BOOLEAN" targetType="APP:INVALID_ACCOUNT" />
@@ -44,7 +45,7 @@ output application/json
 			</on-error-propagate>
 		</error-handler>
 	</flow>
-	<flow name="getAccount\(ID)" doc:id="ef8b2b2e-8f5d-47f6-bd22-01876d149971" >
+	<flow name="getAccount\(id)" doc:id="ef8b2b2e-8f5d-47f6-bd22-01876d149971" >
 		<logger level="INFO" doc:name="Logger" doc:id="b0b715c8-2ea0-4b7d-b183-7e8735ce0bdc" message="get:\dataBaseAccount:greenfleetsystem-config" />
 		<db:select doc:name="Select" doc:id="53cd16e0-2eb6-4655-96ca-7b083f55d9bd" config-ref="Database_Config" >
 			<db:sql ><![CDATA[SELECT * 
@@ -81,7 +82,7 @@ output application/json
 			</on-error-propagate>
 		</error-handler>
 	</flow>
-	<flow name="getAccount\(ID)\vehicles" doc:id="696571c8-5e20-4589-a7ce-32ce846aed3e">
+	<flow name="getAccount\(id)\vehicles" doc:id="696571c8-5e20-4589-a7ce-32ce846aed3e">
 		<logger level="INFO" doc:name="Logger" doc:id="493ce557-c183-44c5-9238-76e475be95ff" message="#[payload]" />
 		<db:select doc:name="Select" doc:id="bd6079b8-e2dd-46b6-8f58-43d56563f38f" config-ref="Database_Config">
 			<db:sql><![CDATA[SELECT vehicle_id, brand, model, status
@@ -127,7 +128,7 @@ output application/json
 	</flow>
 	<flow name="postAccount" doc:id="9711a47f-8433-44f7-9e26-7589b9200515" >
 		<logger level="INFO" doc:name="Logger" doc:id="a1366fcf-627d-4748-b7b7-9ba9b4f67d53" />
-		<set-variable value="#[payload]" doc:name="contas" doc:id="80051c05-dfee-4cd4-bdf5-1eace32d31fd" variableName="Info" />
+		<set-variable value="#[payload]" doc:name="Accounts" doc:id="80051c05-dfee-4cd4-bdf5-1eace32d31fd" variableName="info" />
 		<db:delete doc:name="Delete" doc:id="8161b8aa-422d-4f80-a21a-44044f27acd8" config-ref="Database_Config" >
 			<db:sql ><![CDATA[DELETE FROM accounts;]]></db:sql>
 		</db:delete>
