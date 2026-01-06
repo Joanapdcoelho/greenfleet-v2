@@ -35,3 +35,4 @@ Thumbs.db
 
 # Anypoint local runtime downloads
 **/.mule-soft/
+*.wev
