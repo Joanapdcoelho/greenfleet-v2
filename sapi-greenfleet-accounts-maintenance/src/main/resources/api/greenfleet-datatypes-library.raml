@@ -1,8 +1,8 @@
 #%RAML 1.0 Library
-usage: Greenfleet shared datatypes library
+usage: GreenFleet shared datatypes library
 
 types:
-
+  # Accounts
   Account:
     type: object
     additionalProperties: false
@@ -11,24 +11,52 @@ types:
         type: string
         required: true
         minLength: 1
+        description: Unique account identifier.
+        example: A001
       name:
         type: string
         required: true
         minLength: 1
+        description: Account name.
+        example: GreenFleet Solutions
       industry:
         type: string
         required: false
+        minLength: 1
+        description: Industry sector.
+        example: Fleet Management
       country:
         type: string
         required: true
         minLength: 1
-      vehicles:
-        type: array
+        description: Country where the account is located.
+        example: Portugal
+      sourceSystem:
+        type: string
         required: false
-        items: Vehicle
+        minLength: 1
+        description: Origin system of the record (e.g., internal, partner, salesforce).
+        example: internal
+      externalId:
+        type: string
+        required: false
+        minLength: 1
+        description: Identifier from an external source system (if applicable).
+        example: EXT-12345
+      rawPayload:
+        type: string
+        required: false
+        description: Optional raw payload stored for traceability (e.g., partner ingestion).
+        example: "{\"client_code\":\"C-001\"}"
 
+  Accounts:
+    type: array
+    items: Account
+
+  # Vehicles (independente de Account)  
   VehicleStatus:
     type: string
+    description: Current vehicle state.
     enum: [available, reserved, 'in maintenance']
 
   Vehicle:
@@ -39,23 +67,50 @@ types:
         type: string
         required: true
         minLength: 1
+        description: Unique vehicle identifier.
+        example: V101
+      accountId:
+        type: string
+        required: false
+        minLength: 1
+        description: Account identifier that owns the vehicle.
+        example: A001
       brand:
         type: string
         required: true
         minLength: 1
+        description: Vehicle brand.
+        example: Tesla
       model:
         type: string
         required: true
         minLength: 1
+        description: Vehicle model.
+        example: Model 3
       status:
         type: VehicleStatus
         required: true
-      lastService?:
+      lastService:
         type: date-only
-        description: Optional
+        required: false
+        description: 
+          Optional date of the last service.
+          Used for the weekly CSV report when required.
+        example: 2025-11-18
+      createdAt:
+        type: datetime
+        required: false
+        description: Record creation timestamp.
+        example: 2025-12-30T00:02:00Z
 
+  Vehicles:
+    type: array
+    items: Vehicle
+
+  # Maintenance  
   MaintenanceStatus:
     type: string
+    description: Maintenance lifecycle status.
     enum: [scheduled, 'in progress', completed]
 
   MaintenanceRequest:
@@ -66,31 +121,50 @@ types:
         type: string
         required: true
         minLength: 1
+        description: Unique maintenance request identifier.
+        example: M501
       vehicleId:
         type: string
         required: true
         minLength: 1
+        description: Vehicle identifier associated with the maintenance.
+        example: V102
       description:
         type: string
         required: true
         minLength: 1
+        description: Maintenance description.
+        example: Battery check
       date:
         type: date-only
         required: true
+        description: Scheduled maintenance date.
+        example: 2025-11-20
       status:
         type: MaintenanceStatus
         required: true
 
+  MaintenanceRequests:
+    type: array
+    items: MaintenanceRequest
+
+  
+  # Errors  
   ErrorResponse:
     type: object
     additionalProperties: false
-    properties:
-      code:
+    properties:      
+      status:
         type: integer
         required: true
+        minimum: 400
+        maximum: 599
+        description: HTTP status code.
+        example: 404      
       message:
         type: string
         required: true
-      details?:
-        type: string
-
+        minLength: 1
+        description: Human readable error message.
+        example: Resource not found
+      

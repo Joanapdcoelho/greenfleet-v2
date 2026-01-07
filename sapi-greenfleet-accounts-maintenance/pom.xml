@@ -71,6 +71,13 @@
 			<artifactId>mysql-connector-j</artifactId>
 			<version>8.0.33</version>
 		</dependency>
+		<dependency>
+			<groupId>8447f95a-7ec8-4e54-affa-1ffc93d1beaf</groupId>
+			<artifactId>sapi-greenfleet-accounts-maintenance</artifactId>
+			<version>1.0.3</version>
+			<classifier>raml</classifier>
+			<type>zip</type>
+		</dependency>
 	</dependencies>
 
 	<repositories>

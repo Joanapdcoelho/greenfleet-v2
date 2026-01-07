@@ -10,9 +10,11 @@ mediaType:
 uses:
   lib: greenfleet-datatypes-library.raml
 
-/accounts:
+/accounts:  
   get:
+    #Lista todas as accounts
     displayName: Get accounts
+    description: Returns all registered accounts.
     responses:
       200:
         body:
@@ -24,7 +26,9 @@ uses:
             type: lib.ErrorResponse
 
   post:
+    #Adiciona novas accounts
     displayName: Create account
+    description: Creates a new account.
     body:
       application/json:
         type: lib.Account
@@ -42,13 +46,14 @@ uses:
           application/json:
             type: lib.ErrorResponse
 
-/accounts/{id}:
+/accounts/{accountId}:
   uriParameters:
-    id:
+    accountId:
       type: string
       required: true
   get:
     displayName: Get account by id
+    description: Returns a specific account.
     responses:
       200:
         body:
@@ -63,9 +68,52 @@ uses:
           application/json:
             type: lib.ErrorResponse
 
+/vehicles:
+  get:
+    displayName: Get vehicles
+    description: Returns all vehicles. Can be filtered by status.
+    queryParameters:
+      status:
+        type: string
+        required: false
+        example: inMaintenance
+    responses:
+      200:
+        body:
+          application/json:
+            type: lib.Vehicle[]
+      500:
+        body:
+          application/json:
+            type: lib.ErrorResponse
+
+/vehicles/{vehicleId}:
+  uriParameters:
+    vehicleId:
+      type: string
+      required: true
+
+  get:
+    displayName: Get vehicle by id
+    description: Returns a specific vehicle.
+    responses:
+      200:
+        body:
+          application/json:
+            type: lib.Vehicle
+      404:
+        body:
+          application/json:
+            type: lib.ErrorResponse
+      500:
+        body:
+          application/json:
+            type: lib.ErrorResponse
+
 /maintenance:
   get:
     displayName: Get maintenance requests
+    description: Returns all maintenance requests.
     responses:
       200:
         body:
@@ -78,6 +126,7 @@ uses:
 
   post:
     displayName: Create maintenance request
+    description: Creates a new maintenance request for a vehicle.
     body:
       application/json:
         type: lib.MaintenanceRequest
@@ -95,13 +144,14 @@ uses:
           application/json:
             type: lib.ErrorResponse
 
-/maintenance/{id}:
+/maintenance/{maintenanceId}:
   uriParameters:
-    id:
+    maintenanceId:
       type: string
       required: true
   get:
     displayName: Get maintenance request by id
+    description: Returns a specific maintenance request.
     responses:
       200:
         body:

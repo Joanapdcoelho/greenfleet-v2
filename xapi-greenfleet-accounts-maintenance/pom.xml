@@ -46,13 +46,6 @@
 			<version>1.2.7</version>
 			<classifier>mule-plugin</classifier>
 		</dependency>
-		<dependency>
-			<groupId>8447f95a-7ec8-4e54-affa-1ffc93d1beaf</groupId>
-			<artifactId>xapi-greenfleet-accounts-maintenance</artifactId>
-			<version>1.0.0</version>
-			<classifier>raml</classifier>
-			<type>zip</type>
-		</dependency>
 		<!-- <dependency>
 			<groupId>org.mule.modules</groupId>
 			<artifactId>mule-apikit-module</artifactId>
@@ -70,6 +63,13 @@
 			<artifactId>mule-validation-module</artifactId>
 			<version>2.0.8</version>
 			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>8447f95a-7ec8-4e54-affa-1ffc93d1beaf</groupId>
+			<artifactId>xapi-greenfleet-accounts-maintenance</artifactId>
+			<version>1.0.2</version>
+			<classifier>raml</classifier>
+			<type>zip</type>
 		</dependency>
 	</dependencies>
 

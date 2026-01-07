@@ -14,7 +14,7 @@
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:error-response>
         </http:listener>
-        <apikit:router config-ref="sapi-greenfleet-accounts-maintenance-config" />
+        <apikit:router config-ref="greenfleetsystem-config" />
         <error-handler>
             <on-error-propagate type="APIKIT:BAD_REQUEST">
                 <ee:transform doc:name="Transform Message">
@@ -106,7 +106,7 @@ output application/json
                 <http:headers>#[vars.outboundHeaders default {}]</http:headers>
             </http:error-response>
         </http:listener>
-        <apikit:console config-ref="sapi-greenfleet-accounts-maintenance-config" />
+        <apikit:console config-ref="greenfleetsystem-config" />
         <error-handler>
             <on-error-propagate type="APIKIT:NOT_FOUND">
                 <ee:transform doc:name="Transform Message">
@@ -124,7 +124,8 @@ output application/json
         </error-handler>
     </flow>
     <flow name="get:\accounts:sapi-greenfleet-accounts-maintenance-config">
-        <logger level="INFO" message="get:\accounts:sapi-greenfleet-accounts-maintenance-config" />
+		<logger level="INFO" message="get:\accounts:sapi-greenfleet-accounts-maintenance-config" />
+		<flow-ref doc:name="Get Account Flow Reference" doc:id="b4fef32d-6a4f-484f-8974-f07d85a34177" name="getAccount"/>
     </flow>
     <flow name="get:\accounts\(id):sapi-greenfleet-accounts-maintenance-config">
         <ee:transform doc:name="Transform Message">
@@ -133,9 +134,11 @@ output application/json
             </ee:variables>
         </ee:transform>
         <logger level="INFO" message="get:\accounts\(id):sapi-greenfleet-accounts-maintenance-config" />
+		<flow-ref doc:name="Get Account by id Flow Reference" doc:id="4918cc19-4bfc-4cac-8903-1b81f1bfe416" name="getAccountId"/>
     </flow>
     <flow name="get:\maintenance:sapi-greenfleet-accounts-maintenance-config">
         <logger level="INFO" message="get:\maintenance:sapi-greenfleet-accounts-maintenance-config" />
+		<flow-ref doc:name="Get maintenance Flow Reference" doc:id="a2e03413-9871-46df-af59-9fde032e7d25" name="getMaintenance"/>
     </flow>
     <flow name="get:\maintenance\(id):sapi-greenfleet-accounts-maintenance-config">
         <ee:transform doc:name="Transform Message">
@@ -144,11 +147,14 @@ output application/json
             </ee:variables>
         </ee:transform>
         <logger level="INFO" message="get:\maintenance\(id):sapi-greenfleet-accounts-maintenance-config" />
+		<flow-ref doc:name="Flow Reference" doc:id="91056d72-85c7-41fa-8761-8624eda73f60" name="getMaintenanceId"/>
     </flow>
     <flow name="post:\accounts:application\json:sapi-greenfleet-accounts-maintenance-config">
         <logger level="INFO" message="post:\accounts:application\json:sapi-greenfleet-accounts-maintenance-config" />
+		<flow-ref doc:name="Flow Reference" doc:id="f9ea063f-b2c3-48e1-af07-3dab11dd2f23" name="postAccount"/>
     </flow>
     <flow name="post:\maintenance:application\json:sapi-greenfleet-accounts-maintenance-config">
         <logger level="INFO" message="post:\maintenance:application\json:sapi-greenfleet-accounts-maintenance-config" />
+		<flow-ref doc:name="Flow Reference" doc:id="65970140-211f-4331-aeb7-34c41f71e73d" name="postMaintenance"/>
     </flow>
 </mule>

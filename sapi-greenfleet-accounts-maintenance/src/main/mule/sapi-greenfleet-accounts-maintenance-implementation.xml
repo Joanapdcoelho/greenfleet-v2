@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <mule xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
 	xmlns:db="http://www.mulesoft.org/schema/mule/db"
 	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
@@ -45,7 +44,7 @@ output application/json
 			</on-error-propagate>
 		</error-handler>
 	</flow>
-	<flow name="getAccount\(id)" doc:id="ef8b2b2e-8f5d-47f6-bd22-01876d149971" >
+	<flow name="getAccountId" doc:id="ef8b2b2e-8f5d-47f6-bd22-01876d149971" >
 		<logger level="INFO" doc:name="Logger" doc:id="b0b715c8-2ea0-4b7d-b183-7e8735ce0bdc" message="get:\dataBaseAccount:greenfleetsystem-config" />
 		<db:select doc:name="Select" doc:id="53cd16e0-2eb6-4655-96ca-7b083f55d9bd" config-ref="Database_Config" >
 			<db:sql ><![CDATA[SELECT * 
@@ -156,6 +155,12 @@ vars.info flatMap ((company) ->
 			<db:sql ><![CDATA[INSERT INTO accounts (id, name, industry, country, vehicle_id, brand, model, status)
 VALUES (:id, :name, :industry, :country, :vehicle_id, :brand, :model, :status);]]></db:sql>
 		</db:bulk-insert>
+	</flow>
+	<flow name="getMaintenance" doc:id="81082f29-8e38-4497-a431-3941d329adef" >
+		<logger level="INFO" doc:name="Logger" doc:id="566293a4-18c1-4b2e-a5a6-2728809b4845" />
+	</flow>
+	<flow name="getMaintenanceId" doc:id="8798c878-009e-443e-a968-af0f62732e17" >
+		<logger level="INFO" doc:name="Logger" doc:id="c13cf378-c719-4b95-8108-c148fb2fae28" />
 	</flow>
 	<flow name="postMaintenance" doc:id="5c0ae436-3ae1-404a-9916-429b263fc4aa" >
 		<logger level="INFO" doc:name="Logger" doc:id="0e14c9fd-4fbf-481f-81d1-569f8294668d" />
